@@ -12,8 +12,9 @@ module nokia_holes() {
 }
 
 module nokia_pcb() {
-    linear_extrude(1, center=false)
-        square([50, 42], center=true);
+    color("Lime")
+        linear_extrude(1, center=false)
+            square([50, 42], center=true);
 }
     
 module nokia_board() {
@@ -24,8 +25,9 @@ module nokia_board() {
 }
 
 module nokia_lcd_case() {
-    linear_extrude(4, center=false)
-        square([40, 34], center=true);
+    color("LightCyan")
+        linear_extrude(4, center=false)
+            square([40, 34], center=true);
 }
 
 module nokia_lcd_inset() {
@@ -41,9 +43,42 @@ module nokia_display() {
     }
 }
 
-nokia_display();
-//nokia_holes();
-//nokia_pcb();
-//nokia_board();
-//nokia_lcd_case();
-//nokia_lcd_inset();
+module faceplate_cutout() {
+    minkowski() {
+        linear_extrude(4, center=false)
+            square([34, 23], center=true);
+        cylinder(r=2, h=4);
+    }
+}
+
+module faceplate_highbeam() {
+    translate([0, -32, -1])
+        cylinder(4, 3, 3, center=false);
+}
+
+module faceplate() {
+    color("Black")
+        difference() {
+            difference() {
+                linear_extrude(2, center=false)
+                    circle(d=80);
+                translate([0, 10, -1])
+                    faceplate_cutout();
+            }
+            faceplate_highbeam();
+        }
+}
+
+module assembly() {
+    translate([0, 10, 0])
+        nokia_display();
+    translate([0, 0, 5])
+        faceplate();
+}
+
+mod = "faceplate";
+
+if (mod == "display") nokia_display();
+else if (mod == "faceplate") faceplate();
+else if (mod == "assy")
+    assembly();
