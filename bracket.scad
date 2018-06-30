@@ -1,21 +1,37 @@
-module sideplate1() {
-    linear_extrude(2, center=false)
-        square([25, 10], center=true);
-}
+include <speedo_config.scad>
 
-module sideplate2() {
-    linear_extrude(2, center=false)
-        square([25, 5], center=true);
+module sideplate() {
+    linear_extrude(25, center=false)
+    polygon(points=[
+    [-5,0],
+    [15,0],
+    [25,(bracket_display_width-bracket_inner_width)/2+bracket_thickness],
+    [bracket_faceplate_height,(bracket_display_width-bracket_inner_width)/2+bracket_thickness],
+    [bracket_faceplate_height,(bracket_display_width-bracket_inner_width)/2+2*bracket_thickness],
+    [25-1,(bracket_display_width-bracket_inner_width)/2+2*bracket_thickness],
+    [15-1,bracket_thickness],
+    [-5,bracket_thickness]
+    ]);
 }
     
-module sideplate3() {
-    linear_extrude(2, center=false)
-        square([25, 30], center=true);
+module sideplate_trim() {
+    linear_extrude(bracket_display_width, center=false)
+        polygon(points=[[-2,-2],[8,-2],[-2,8]]);
 }
-  
-module mount_ear() {
-    linear_extrude(2, center=false)
-        polygon(points=[[-10,0],[10,0],[5,5],[-5,5]]);
+
+module sideplates() {
+    difference() {
+        union() {
+            translate([0, bracket_inner_width/2-bracket_thickness, 0])
+                sideplate();
+            translate([0,-bracket_inner_width/2+bracket_thickness, 25])
+                rotate(a=[180,0,0])
+                    sideplate();
+        }
+        translate([-5,-bracket_display_width/2,0])
+            rotate(a=[-90,-90,0])
+                sideplate_trim();
+    }
 }
 
 module display_post() {
@@ -35,148 +51,89 @@ module display_posts() {
     }
 }
 
-module faceplate_cutout() {
-    linear_extrude(6, center=true)
-        square([25, 25], center=true);
+module display_hole() {
+    cylinder(4, faceplate_attach_hole_r, faceplate_attach_hole_r, center=false);
 }
 
-module displayplate() {
-    difference() {
-        union() {
-            linear_extrude(2, center=false)
-                square([48, 52], center=true);
-            translate([1.5, 0, 2])
-                rotate([0, 0, 90])
-                    display_posts();
-        }
-        translate([-20,0,-3])
-            faceplate_cutout();
-    }
-}
-
-module bracket() {
+module display_holes() {
     union() {
-        translate([11.5, 0, 42-5-2-2])
-            displayplate();
-        translate([0, 23, 5]) 
-            rotate(a=[90,0,0])
-                sideplate1();
-        translate([0, -21, 5]) 
-            rotate(a=[90,0,0])
-                sideplate1();
-        translate([0, 23.5, 10]) 
-            sideplate2();
-        translate([0, -23.5, 10]) 
-            sideplate2();
-        translate([0, 26, 27]) 
-            rotate(a=[90,0,0])
-                sideplate3();
-        translate([0, -24, 27]) 
-            rotate(a=[90,0,0])
-                sideplate3();
-        translate([0, 26, 40]) 
-            mount_ear();
-        translate([0, -26, 42])
-            rotate([180,0,0])
-                mount_ear();
-        translate([-12.5, 26, 30]) 
-            rotate([0,90,0])
-                mount_ear();
-        translate([-10.5, -26, 30])
-            rotate([180,90,0])
-                mount_ear();
-    }
-}
-
-module nokia_hole() {
-    cylinder(6, 1.5, 1.5, center=false);
-} 
-
-module nokia_holes() {
-    union() {
-        translate([-44.5 / 2.0, -37.5 / 2.0, -2]) nokia_hole();
-        translate([-44.5 / 2.0, 37.5 / 2.0, -2]) nokia_hole();
-        translate([44.5 / 2.0, -37.5 / 2.0, -2]) nokia_hole();
-        translate([44.5 / 2.0, 37.5 / 2.0, -2]) nokia_hole();
-    }
-}
-
-module nokia_pcb() {
-    color("Lime")
-        linear_extrude(1, center=false)
-            square([50, 42], center=true);
-}
-    
-module nokia_board() {
-    difference() {
-        nokia_pcb();
-        nokia_holes();
-    }
-}
-
-module nokia_lcd_case() {
-    color("LightCyan")
-        linear_extrude(4, center=false)
-            square([40, 34], center=true);
-}
-
-module nokia_lcd_inset() {
-    linear_extrude(2, center=false)
-        square([36, 25.5], center=true);
-}
-
-module nokia_display() {
-    nokia_board();
-    difference() {
-        translate([0, 0, 1]) nokia_lcd_case();
-        translate([0, -3, 4.5]) nokia_lcd_inset();
+        translate([-faceplate_attach_hole_span/2, 0, -1])
+            display_hole();
+        translate([faceplate_attach_hole_span/2, 0, -1])
+            display_hole();
     }
 }
 
 module faceplate_cutout() {
     minkowski() {
-        linear_extrude(4, center=false)
-            square([34, 23], center=true);
-        cylinder(r=2, h=4);
+        linear_extrude(6, center=true)
+            square([25, 25], center=true);
+        cylinder(r=2,h=6);
     }
 }
 
-module faceplate_highbeam() {
-    translate([0, -32, -1])
-        cylinder(4, 3, 3, center=false);
-}
-
-module faceplate() {
-    color("Black")
-        difference() {
-            difference() {
-                linear_extrude(2, center=false)
-                    circle(d=80);
-                translate([0, 10, -1])
-                    faceplate_cutout();
-            }
-            faceplate_highbeam();
+module displayplate() {
+    difference() {
+        union() {
+            linear_extrude(bracket_thickness, center=false)
+                square([48, bracket_display_width], center=true);
+            translate([1.5, 0, 2])
+                rotate([0, 0, 90])
+                    display_posts();
         }
+        translate([-20,0,0])
+            faceplate_cutout();
+    }
 }
 
-module assembly() {
-    bracket();
-    translate([13, 0, 42-5])
-        rotate([0,0,-90])
-            nokia_display();
-    translate([0, 0, 42])
-        rotate([0,0,-90])
-            faceplate();
+module display_ear() {
+    linear_extrude(bracket_thickness, center=false)
+        polygon(points=[[-10,0],[10,0],[5,5],[-5,5]]);
 }
 
-mod = "bracket";
+module display_ears() {
+    difference() {
+        union() {
+            translate([0, 
+            bracket_display_width/2+bracket_thickness, 0]) 
+                display_ear();
+            translate([0, 
+            -bracket_display_width/2-bracket_thickness, bracket_thickness])
+                rotate([180,0,0])
+                    display_ear();
+        }
+        rotate([0, 0, 90])
+            display_holes();
+    }
+}
 
-if (mod == "display") nokia_display();
-else if (mod == "faceplate") 
-    faceplate();
-else if (mod == "bracket") 
-    translate([0, 0, 12.5])
-        rotate([0,-90, 0]) 
-        bracket();
-else if (mod == "assy")
-    assembly();
+module pcb_ear() {
+    linear_extrude(bracket_thickness, center=false)
+        polygon(points=[[-5,0],[10,0],[10,5],[0,5]]);
+}
+
+module pcb_ears() {
+    translate([0, bracket_display_width/2+bracket_thickness, 0]) 
+           pcb_ear();
+    translate([0, 
+            -bracket_display_width/2-bracket_thickness, bracket_thickness])
+        rotate([180,0,0])
+            pcb_ear();
+}
+
+module bracket() {
+    union() {
+        translate([25/2,0,0])
+            rotate(a=[0,-90,0])
+                sideplates();
+        translate([11.5, 0, 42-5-bracket_thickness-2])
+            displayplate();
+        translate([-25/2+bracket_thickness, 0, bracket_faceplate_height-10]) 
+            rotate(a=[0,-90,0])
+                pcb_ears();
+        translate([0, 0, bracket_faceplate_height-bracket_thickness])
+            display_ears();
+    }
+}
+
+bracket();
