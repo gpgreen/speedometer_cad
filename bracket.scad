@@ -28,8 +28,8 @@ module sideplates() {
                 rotate(a=[180,0,0])
                     sideplate();
         }
-        translate([-5,-bracket_display_width/2,0])
-            rotate(a=[-90,-90,0])
+        translate([-5,bracket_display_width/2,25])
+            rotate(a=[90,90,0])
                 sideplate_trim();
     }
 }
