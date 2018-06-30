@@ -12,32 +12,79 @@ module sideplate3() {
     linear_extrude(2, center=false)
         square([25, 30], center=true);
 }
-    
-module frontplate() {
+  
+module mount_ear() {
     linear_extrude(2, center=false)
-        square([42, 52], center=true);
+        polygon(points=[[-10,0],[10,0],[5,5],[-5,5]]);
+}
+
+module display_post() {
+    union() {
+        cylinder(2, 2, 2, center=false);
+        translate([0, 0, 2])
+            cylinder(1, 1.5, 1.5, center=false);
+    }
+}
+
+module display_posts() {
+    union() {
+        translate([-44.5 / 2.0, -37.5 / 2.0, 0]) display_post();
+        translate([-44.5 / 2.0, 37.5 / 2.0, 0]) display_post();
+        translate([44.5 / 2.0, -37.5 / 2.0, 0]) display_post();
+        translate([44.5 / 2.0, 37.5 / 2.0, 0]) display_post();
+    }
+}
+
+module faceplate_cutout() {
+    linear_extrude(6, center=true)
+        square([25, 25], center=true);
+}
+
+module displayplate() {
+    difference() {
+        union() {
+            linear_extrude(2, center=false)
+                square([48, 52], center=true);
+            translate([1.5, 0, 2])
+                rotate([0, 0, 90])
+                    display_posts();
+        }
+        translate([-20,0,-3])
+            faceplate_cutout();
+    }
 }
 
 module bracket() {
     union() {
-        translate([7.5, 0, 42-5-2])
-            frontplate();
+        translate([11.5, 0, 42-5-2-2])
+            displayplate();
         translate([0, 23, 5]) 
             rotate(a=[90,0,0])
                 sideplate1();
-        translate([0, -23, 5]) 
+        translate([0, -21, 5]) 
             rotate(a=[90,0,0])
                 sideplate1();
         translate([0, 23.5, 10]) 
             sideplate2();
-        translate([0, -25.5, 10]) 
+        translate([0, -23.5, 10]) 
             sideplate2();
         translate([0, 26, 27]) 
             rotate(a=[90,0,0])
                 sideplate3();
-        translate([0, -26, 27]) 
+        translate([0, -24, 27]) 
             rotate(a=[90,0,0])
                 sideplate3();
+        translate([0, 26, 40]) 
+            mount_ear();
+        translate([0, -26, 42])
+            rotate([180,0,0])
+                mount_ear();
+        translate([-12.5, 26, 30]) 
+            rotate([0,90,0])
+                mount_ear();
+        translate([-10.5, -26, 30])
+            rotate([180,90,0])
+                mount_ear();
     }
 }
 
@@ -113,16 +160,23 @@ module faceplate() {
 }
 
 module assembly() {
-    translate([0, 10, 0])
-        nokia_display();
-    translate([0, 0, 5])
-        faceplate();
+    bracket();
+    translate([13, 0, 42-5])
+        rotate([0,0,-90])
+            nokia_display();
+    translate([0, 0, 42])
+        rotate([0,0,-90])
+            faceplate();
 }
 
 mod = "bracket";
 
 if (mod == "display") nokia_display();
-else if (mod == "faceplate") faceplate();
-else if (mod == "bracket") bracket();
+else if (mod == "faceplate") 
+    faceplate();
+else if (mod == "bracket") 
+    translate([0, 0, 12.5])
+        rotate([0,-90, 0]) 
+        bracket();
 else if (mod == "assy")
     assembly();
