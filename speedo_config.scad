@@ -1,6 +1,7 @@
 
 faceplate_display_width = 36;
 faceplate_display_height = 25;
+faceplate_thickness = 2;
 
 faceplate_attach_hole_r = 1;
 faceplate_attach_hole_span = 62;

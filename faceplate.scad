@@ -3,8 +3,8 @@ include <speedo_config.scad>
 module faceplate_cutout() {
     minkowski() {
         linear_extrude(4, center=false)
-            square([faceplate_display_width-2,    faceplate_display_height-2], center=true);
-        cylinder(r=2, h=4);
+            square([faceplate_display_width-6, faceplate_display_height-6], center=true);
+        cylinder(r=3, h=4);
     }
 }
 
@@ -29,7 +29,7 @@ module faceplate_holes() {
 module faceplate() {
     color("Black")
         difference() {
-            linear_extrude(2, center=false)
+            linear_extrude(faceplate_thickness, center=false)
                 circle(d=80);
             union() {
                 translate([0, 10, -1])
