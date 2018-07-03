@@ -3,19 +3,19 @@ include <speedo_config.scad>
 module sideplate() {
     linear_extrude(25, center=false)
         polygon(points=[
-		[-5,0],
+		[-16,0],
     		[15,0],
     		[25,(bracket_display_width-bracket_inner_width)/2+bracket_thickness],
     		[bracket_faceplate_height,(bracket_display_width-bracket_inner_width)/2+bracket_thickness],
     		[bracket_faceplate_height,(bracket_display_width-bracket_inner_width)/2+2*bracket_thickness],
     		[25-1,(bracket_display_width-bracket_inner_width)/2+2*bracket_thickness],
     		[15-1,bracket_thickness],
-    		[-5,bracket_thickness]]);
+    		[-16,bracket_thickness]]);
 }
     
 module sideplate_trim() {
     linear_extrude(bracket_display_width, center=false)
-        polygon(points=[[-2,-2],[8,-2],[-2,8]]);
+        polygon(points=[[-16,0],[-8,15],[-16,15]]);
 }
 
 module sideplates() {
@@ -27,8 +27,8 @@ module sideplates() {
                 rotate(a=[180,0,0])
                     sideplate();
         }
-        translate([-5,bracket_display_width/2,25])
-            rotate(a=[90,90,0])
+        translate([0,bracket_display_width/2,10])
+            rotate(a=[90,0,0])
                 sideplate_trim();
     }
 }
@@ -46,7 +46,12 @@ module reinforcement() {
             [0,-3],
     		[-5,0]]);
 }
-    
+
+module endplate() {
+    linear_extrude(bracket_thickness, center=false)
+        square([10,bracket_inner_width],center=false);
+}
+
 module reinforcements() {
     union() {
         translate([0, bracket_inner_width/2-bracket_thickness, 0])
@@ -176,6 +181,9 @@ module bracket() {
         translate([12.5,0,0])
             rotate(a=[0,-90,0])
                 reinforcements();
+        translate([2.5,-bracket_inner_width/2,-16])
+            rotate(a=[0,0,0])
+                endplate();
     }
 }
 
