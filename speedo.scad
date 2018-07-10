@@ -13,7 +13,7 @@ module assembly() {
             faceplate();
 }
 
-mod = "bracket";
+mod = "faceplate";
 
 if (mod == "display")
     nokia_display();
