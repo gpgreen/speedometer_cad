@@ -136,7 +136,7 @@ module displayplate() {
 
 module display_ear() {
     linear_extrude(bracket_thickness, center=false)
-        polygon(points=[[-12,0],[12,0],[12,5],[-7,5]]);
+        polygon(points=[[-12.5,0],[12,0],[12,5],[-12.5,5]]);
 }
 
 module display_ears() {
@@ -162,6 +162,11 @@ module pcb_ears() {
     translate([0, bracket_display_width/2+bracket_thickness, 0]) 
            pcb_ear();
     translate([0, -bracket_display_width/2-bracket_thickness, bracket_thickness])
+        rotate(a=[180,0,0])
+            pcb_ear();
+    translate([0, bracket_display_width/2+bracket_thickness, 25-bracket_thickness]) 
+           pcb_ear();
+    translate([0, -bracket_display_width/2-bracket_thickness, 25])
         rotate(a=[180,0,0])
             pcb_ear();
 }
