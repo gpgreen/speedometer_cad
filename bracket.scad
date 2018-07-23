@@ -15,7 +15,7 @@ module sideplate() {
     
 module sideplate_trim() {
     linear_extrude(bracket_display_width, center=false)
-        polygon(points=[[-16,0],[-8,15],[-16,15]]);
+        polygon(points=[[-16,0],[-4,15],[-16,15]]);
 }
 
 module sideplates() {
